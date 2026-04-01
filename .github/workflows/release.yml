@@ -54,6 +54,11 @@ jobs:
           cd upstream
           # Bytecode compatibility patch for Kototoro Native JVM Host
           sed -i 's/public val source: MangaParserSource/public val source: MangaSource/g' src/main/kotlin/org/koitharu/kotatsu/parsers/MangaParser.kt
+          # API Retention Patch for Kototoro Broken Source Filter
+          sed -i 's/@Retention(AnnotationRetention.SOURCE)/@Retention(AnnotationRetention.RUNTIME)/g' src/main/kotlin/org/koitharu/kotatsu/parsers/Broken.kt
+          sed -i 's/internal annotation class Broken/public annotation class Broken/g' src/main/kotlin/org/koitharu/kotatsu/parsers/Broken.kt
+          sed -i 's/@Retention(AnnotationRetention.SOURCE)/@Retention(AnnotationRetention.RUNTIME)/g' src/main/kotlin/org/koitharu/kotatsu/parsers/MangaSourceParser.kt
+          sed -i 's/internal annotation class MangaSourceParser/public annotation class MangaSourceParser/g' src/main/kotlin/org/koitharu/kotatsu/parsers/MangaSourceParser.kt
           chmod +x ./gradlew
           ./gradlew jar --no-daemon
         
