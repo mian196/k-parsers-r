@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Upstream
         uses: actions/checkout@v4
         with:
-          repository: 'mian196/kotatsu-parsers-redo'
+          repository: '${{ github.repository_owner }}/kotatsu-parsers-redo'
           path: 'upstream'
           
       - name: Poll Upstream Delta
@@ -98,3 +98,22 @@ jobs:
           publish_dir: ./deploy_new
           publish_branch: repo
           force_orphan: true
+
+      - name: Upload JAR Artifact
+        if: steps.check_update.outputs.has_update == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-jar
+          path: deploy_new/apk/plugin.jar
+
+      - name: Create Release
+        if: steps.check_update.outputs.has_update == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Release v1.0.${{ github.run_number }}
+          files: deploy_new/apk/plugin.jar
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
